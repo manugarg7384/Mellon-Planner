@@ -95,10 +95,10 @@ def getschedules(request):
         allListFormatted += [listFormatted]
         unitsList += [units]
 
-
+    if len(allListFormatted) != 0:
     #print listFormatted
     #('15122 Lec 2 N', 20, [(0, 12.5, 13.5), (1, 10.5, 12.0), (3, 10.5, 12.0)]), ('21127 Lec 2 H', 20, [(0, 14.5, 15.5), (1, 13.5, 14.5), (2, 14.5, 15.5), (3, 13.5, 14.5), (4, 14.5, 15.5)])
-    context['schedule'] = listFormatted
+        context['schedule'] = allListFormatted[0]
 
     #context['scheduleCount'] = len(allListFormatted)
     request.session['schedules'],request.session['units'] = allListFormatted,unitsList
