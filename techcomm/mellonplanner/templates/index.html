@@ -60,12 +60,16 @@
             <form method="post" action="/getschedules/">
               
                 <select name="semester" class="form-control">
-                    <option value="Fall">Fall</option>
-                    <option value="Spring">Spring</option>
-                    <option value="Summer 1">Summer 1/All</option>
-
-                    <option value="Summer 2">Summer 2</option>
-
+                    <option value=0>Fall</option>
+                    <option value=1>Spring</option>
+                    <option value=2>Summer 1/All</option>
+                    <option value=3>Summer 2</option>
+                </select>
+              <br>
+                <select name="preference" class="form-control">
+                    <option value="Morning">Morning</option>
+                    <option value="Afternoon">Afternoon</option>
+                    <option value="Evening">Evening</option>
                 </select>
               <br>
               <input type="text" name="loc" class="form-control" placeholder="Enter classes" required autofocus>
@@ -83,6 +87,7 @@
             </form>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1>{{semester}}</h1>
           <div id='calendar1'></div>
           
           <nav>
