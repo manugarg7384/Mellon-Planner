@@ -88,8 +88,9 @@ def getScheds(clss):
 
     scheds = [[tsg[i] for i in s] for s in maxIndepSets]
     units = [sum(t[2].units for t in s) for s in scheds]
-    scheds = sorted(zip(units,scheds),key=lambda t: t[0])
-    scheds = [t[1] for t in scheds]
+    units_scheds = sorted(zip(units,scheds),key=lambda t: t[0])
+    scheds = [t[1] for t in units_scheds]
+    units = [t[0] for t in units_scheds]
     return scheds,units
 
 def getAllSchedules(classNums, sem=0):
