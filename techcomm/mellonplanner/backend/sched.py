@@ -93,12 +93,22 @@ def getScheds(clss):
     units = [t[0] for t in units_scheds]
     return scheds,units
 
-def getAllSchedules(classNums, sem=0, min=0, max=100, pref=None):
+def getAllSchedules(classNums, sem=0, minUnits=0, maxUnits=100, pref=None):
+    sem = int(sem)
+    minUnits = int(minUnits)
+    maxUnits = int(maxUnits)
+
     classNums = map(lambda s: s.replace('-', ''), classNums)
     fullSched = getFullSchedule(sem)
     allClasses = [fullSched[cns] for cns in classNums if cns in fullSched]
 
     scheds, units = getScheds(allClasses)
+
+    # FILTER MIN
+    scheds_units = zip(scheds, units)
+    scheds_units = filter(lambda p: p[1] >= minUnits, scheds_units)
+    scheds = [s for (s,_) in scheds_units]
+    units = [u for (_, u) in scheds_units]
 
     flatScheds = []
     for i in range(len(scheds)):
@@ -114,7 +124,7 @@ def getAllSchedules(classNums, sem=0, min=0, max=100, pref=None):
 if __name__ == '__main__':
 
 
-    print(getAllSchedules(['15213', '15440'], sem=0))
+    #print(getAllSchedules(['15213', '15440'], sem=0))
 
     #exit(0)
 
@@ -128,7 +138,9 @@ if __name__ == '__main__':
     #classNums = ['85340', '85442', '36309', '09217', '09221']
     #classNums = ['09221']
 
-    classNums = ['15122','21127','15150']
+    #classNums = ['15122','21127','15150']
+
+    classNums = ['15122', '21325']
 
     allClasses = map(findClass, classNums)
 
