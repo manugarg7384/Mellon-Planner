@@ -6,7 +6,7 @@ Created on Mar 21, 2015
 
 import urllib2
 import re
-from clslecrec import Cls, Lec, Rec
+from clslecrec import Cls, Lec, Rec, getDay
 
 import time
 
@@ -49,6 +49,7 @@ def parseSched(f):
     activeCls = None
     activeLec = None
     lecStyle = False
+    activeRec = None
 
     allTokens = []
     i = 0
@@ -110,7 +111,7 @@ def parseSched(f):
             if 'pittsburgh' not in location.lower():
                 continue
 
-            if not timestart or not timeend or not lecsec:
+            if not timestart or not timeend or (not lecsec and not activeRec):
                 continue
             timestart = parseTime(timestart)
             timeend = parseTime(timeend)
@@ -122,19 +123,28 @@ def parseSched(f):
                     lecStyle = True
                 else:
                     lecStyle = False
+                activeRec = None
             elif lecsec and re.match(LEC_RE, lecsec):
                 #new lecture in style "Lec..."
                 lecStyle = True
                 activeLec = Lec(days, timestart, timeend)
                 activeCls.lecs[lecsec] = activeLec
+                activeRec = None
             elif lecsec and not lecStyle:
                 #new lecture in other style
                 activeLec = Lec(days, timestart, timeend)
                 activeCls.lecs[lecsec] = activeLec
+                activeRec = None
+            elif not lecsec and activeRec:
+                #second recitation
+                for day in days:
+                    activeRec.rDays.append(getDay(day))
+                activeRec = None
             elif lecsec:
                 #recitation
                 newRec = Rec(days, timestart, timeend)
                 activeLec.recs[lecsec] = newRec
+                activeRec = newRec
 
 
     return sched

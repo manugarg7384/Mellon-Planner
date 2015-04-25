@@ -102,6 +102,10 @@ def getAllSchedules(classNums, sem=0, minUnits=0, maxUnits=100, pref=None):
     fullSched = getFullSchedule(sem)
     allClasses = [fullSched[cns] for cns in classNums if cns in fullSched]
 
+    print(allClasses)
+
+
+
     scheds, units = getScheds(allClasses)
 
     # FILTER MIN
@@ -109,6 +113,9 @@ def getAllSchedules(classNums, sem=0, minUnits=0, maxUnits=100, pref=None):
     scheds_units = filter(lambda p: p[1] >= minUnits, scheds_units)
     scheds = [s for (s,_) in scheds_units]
     units = [u for (_, u) in scheds_units]
+
+    # FILTER MAX. LOOK AT SUBSETS
+
 
     flatScheds = []
     for i in range(len(scheds)):
@@ -140,7 +147,7 @@ if __name__ == '__main__':
 
     #classNums = ['15122','21127','15150']
 
-    classNums = ['15122', '21325']
+    classNums = ['15122', '15112', '21325']
 
     allClasses = map(findClass, classNums)
 
