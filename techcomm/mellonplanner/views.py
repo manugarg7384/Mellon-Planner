@@ -65,14 +65,13 @@ def getschedules(request):
     # Should check for validity of classes here, and add errors if any
     # Then call the backend functions
     try:
-        print(semester)
         schedules = getAllSchedules(list_of_classes, int(semester),
                                     request.POST['minunits'],
                                     request.POST['maxunits'],
                                     str(pref))
 
     except Exception:
-        context['errors'] += "Something went wrong with course names. May not exist."
+        errors.append('Something went wrong with course names. May not exist.')
         return render(request, 'index.html', context)
 
 
