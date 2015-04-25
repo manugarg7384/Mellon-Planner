@@ -6,6 +6,9 @@ Created on Mar 22, 2015
 
 dDict = {'U': -1, 'M':0, 'T':1, 'W':2, 'R':3, 'F':4, 'S': 5}
 
+def getDay(s):
+    return dDict[s]
+
 class Rec:
     def __init__(self, rDays, rTimeStart, rTimeEnd):
         self.rDays = [dDict[c] for c in rDays]
