@@ -93,7 +93,7 @@ def getScheds(clss):
     units = [t[0] for t in units_scheds]
     return scheds,units
 
-def getAllSchedules(classNums, sem=0):
+def getAllSchedules(classNums, sem=0, min=0, max=100, pref=None):
     classNums = map(lambda s: s.replace('-', ''), classNums)
     fullSched = getFullSchedule(sem)
     allClasses = [fullSched[cns] for cns in classNums if cns in fullSched]
