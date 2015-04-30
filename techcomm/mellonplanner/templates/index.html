@@ -28,7 +28,7 @@
 
   <body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color:#00aedb;">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -44,8 +44,8 @@
             <li>
                 <a href="{% url 'home' %}">
                   
-                    <button  value="" class="btn btn-primary">Try New Schedule</button>
-                    
+                    <!-- <button  value="" class="btn btn-primary">Try New Schedule</button>
+                     -->
                 </a>
             </li>
           </ul>
@@ -55,7 +55,7 @@
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
+        <div class="col-sm-3 col-md-2 sidebar" style="background-color:#b3e6a8;">
           <br><br><br><br>
             <form method="post" action="/getschedules/">
               
@@ -82,7 +82,7 @@
               (Enter the maximum units you are willing to take)
               <br>
               <br>
-              <input type="submit" value="Submit" class="btn btn-primary">
+              <input type="submit" value="Submit" class="btn btn-primary" style="background-color:#d41243;border-color:#d41243;">
               {% csrf_token %}
             </form>
         </div>
@@ -152,6 +152,12 @@
     $( "th.fc-thu" ).html("Thursday");
     $( "th.fc-fri" ).html("Friday");
     $( "th.fc-sat" ).html("Saturday");
+    classes = {{ classes|safe }};
+    colors = ["#00aedb", "#a200ff", "#f47835", "#d41243", "#8ec127"];
+    for (cls in classes) {
+      console.log("div:contains('" + classes[cls] + "')");
+      $( "div:contains('" + classes[cls] + "')" ).filter(".fc-content").parent().css('background-color', colors[cls]).css('border-color',colors[cls]);
+    }
   });
   
 
