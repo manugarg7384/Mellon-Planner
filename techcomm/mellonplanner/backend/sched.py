@@ -4,7 +4,7 @@ Created on Oct 23, 2014
 @author: Bill
 '''
 
-from Tkinter import *
+#from Tkinter import *
 import random, math
 from graphUtil import *
 from sparse import getFullSchedule

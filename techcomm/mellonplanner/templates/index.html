@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="http://getbootstrap.com/favicon.ico">
 
-    <title>Mellon Planner</title>
+    <title>MellonPlanner</title>
 
     <!-- Bootstrap core CSS -->
     <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -26,13 +26,12 @@
     
   </head>
 
-  <body>
+  <body style="background: url(http://subtlepatterns.com/patterns/cream_pixels.png);">
 
     <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color:#00aedb;">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -55,7 +54,7 @@
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar" style="background-color:#b3e6a8;">
+        <div class="col-sm-3 col-md-2 sidebar" style="background-color:#b3e6a8; background: url(http://subtlepatterns.com/patterns/congruent_pentagon.png);">
           <br><br><br><br>
             <form method="post" action="/getschedules/">
               
@@ -75,10 +74,10 @@
               <input type="text" name="loc" class="form-control" placeholder="Enter classes" required autofocus>
               (For example: 15-122, 15-150, 21-127, 57-173...)
               <br>
-              <input type="text" name="minunits" class="form-control" placeholder="Enter minimum units" required autofocus>
+              <input type="text" name="minunits" class="form-control" placeholder="Enter minimum units" autofocus>
               (Enter the minimum units you need to take)
               <br>
-              <input type="text" name="maxunits" class="form-control" placeholder="Enter maximum units" required autofocus>
+              <input type="text" name="maxunits" class="form-control" placeholder="Enter maximum units" autofocus>
               (Enter the maximum units you are willing to take)
               <br>
               <br>
@@ -86,9 +85,16 @@
               {% csrf_token %}
             </form>
         </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" >
+          {% if schedule %}
           <h1>{{semester}}</h1>
           <div id='calendar1'></div>
+          {% else %}
+          <center><h1 style="color:#d41243;">Welcome to MellonPlanner<h1>
+          <h3 style="color:#f47835;">We can help you find your best schedule.<h3></center>
+          {% endif %}
+
+          
           
           <nav>
             <ul class="pagination">

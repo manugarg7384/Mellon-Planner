@@ -30,7 +30,7 @@ def getschedule(request, index):
     context['unitsList'] = enumerate(unitsList)
     context['currentIndex'] = index
     context['classes'] = [cls.encode("utf-8").replace("-","") for cls in request.session['classes']]
-    
+
     # and finally put pictures in the context dictionary
     return render(request, 'index.html', context)
 
@@ -42,10 +42,7 @@ def getschedules(request):
     context['errors'] = errors
     if not 'loc' in request.POST or not request.POST['loc']:
         errors.append('List of classes is required')
-    if not 'minunits' in request.POST or not request.POST['minunits']:
-        errors.append('Minimum units is required')
-    if not 'maxunits' in request.POST or not request.POST['maxunits']:
-        errors.append('Maximum units is required')
+   
     semester = request.POST['semester']
     pref = request.POST['preference']
     if(int(semester) == 0):
@@ -58,16 +55,22 @@ def getschedules(request):
         context['semester'] = 'Summer 2'       
     if errors:
         return render(request, 'index.html', context)
-    if(int(request.POST['minunits']) < 0 or
-       (int(request.POST['maxunits']) < int(request.POST['minunits']))):
-        errors.append('Invalid units')
+    if (request.POST['minunits'] and request.POST['maxunits']):
+        if(int(request.POST['minunits']) < 0 or
+           (int(request.POST['maxunits']) < int(request.POST['minunits']))):
+            errors.append('Invalid units')
+        minunits = request.POST['minunits']
+        maxunits = request.POST['maxunits']
+    else:
+        minunits = 0
+        maxunits = 999
     list_of_classes = request.POST['loc'].replace(' ', '').split(",")
     # Should check for validity of classes here, and add errors if any
     # Then call the backend functions
     try:
         schedules = getAllSchedules(list_of_classes, int(semester),
-                                    request.POST['minunits'],
-                                    request.POST['maxunits'],
+                                    minunits,
+                                    maxunits,
                                     str(pref))
 
     except Exception:
