@@ -91,6 +91,38 @@ def independentSet(adjMatrix):
     return maximalCliques(G)
 
 
+#all maximal knapsack solutions
+#solns returned in reverse of lexicographic order by index
+def knapsack(sizes, maxSize):
+
+    n = len(sizes)
+    k_memo = [[None for _ in range(maxSize)] for _ in range(n)]
+
+    def knapsackRec(i, t):
+        if t == maxSize or i == n:
+            return [(0, [])]
+        if k_memo[i][t]:
+            return k_memo[i][t]
+
+        valid = []
+
+        #do not include this value
+        #filter solutions where there is room for this value
+        valid.extend(filter(lambda (sz, ss) : sz + sizes[i] > maxSize - t,
+                            knapsackRec(i+1, t)))
+
+        #include this value if it fits
+        if sizes[i] <= maxSize - t:
+            subsols = knapsackRec(i+1, t+sizes[i])
+            newSols = [(sizes[i] + sz, [i] + subsol) for (sz, subsol) in subsols]
+            valid.extend(newSols)
+
+        k_memo[i][t] = valid
+        return valid
+
+    return knapsackRec(0, 0)
+
+
 if __name__ == '__main__':
 
     #M = [[1,1,0],[0,1,1],[0,0,0]]

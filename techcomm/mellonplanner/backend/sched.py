@@ -4,7 +4,7 @@ Created on Oct 23, 2014
 @author: Bill
 '''
 
-#from Tkinter import *
+from Tkinter import *
 import random, math
 from graphUtil import *
 from sparse import getFullSchedule
@@ -63,8 +63,33 @@ def flattenClasses(clss):
 def minStartTime(t):
     return min(v[0] for (_,v) in t.items())
 
-def getScheds(clss):
+def minRep(t):
+    # t is a timeTable
+    return {d: min(ts for (ts, _) in t[d]) for d in t}
+
+def schedMeanMinTime(timeTables, pref=0):
+    minTables = [minRep(t) for t in timeTables]
+    initial = {k:None for k in range(-1, 6)}
+
+    for mint in minTables:
+        for d in mint:
+            if not initial[d] or mint[d] < initial[d]:
+                initial[d] = mint[d]
+
+    minTimeSum = 0
+    for d in initial:
+        if initial[d]:
+            minTimeSum += initial[d]
+        else:
+            minTimeSum += 12 * pref
+
+    return minTimeSum / 7.0
+
+
+def getScheds(clss, maxUnits=None, pref=0):
     tsg = flattenClasses(clss)
+
+    clsUnits = [tsg[i][2].units for i in range(len(tsg))]
 
     N = len(tsg)
     adj1 = [[j for j in range(N) if (i==j or tsg[i][2].cId == tsg[j][2].cId or intersects(tsg[i][1],tsg[j][1]))] for i in range(N)]
@@ -86,35 +111,67 @@ def getScheds(clss):
         maxIndepSets = newMaxIndepSets
 
 
-    scheds = [[tsg[i] for i in s] for s in maxIndepSets]
+    if maxUnits:
+        maxIndepSetsInBounds = []
+        for sol in maxIndepSets:
+            munits = [clsUnits[v] for v in sol]
+            ks = knapsack(munits, maxUnits)
+
+            for (_, v) in ks:
+                misb = [sol[i] for i in v]
+                if not misb in maxIndepSetsInBounds:
+                    maxIndepSetsInBounds.append(misb)
+    else:
+        maxIndepSetsInBounds = maxIndepSets
+
+    scheds = [[tsg[i] for i in s] for s in maxIndepSetsInBounds]
+    times = [schedMeanMinTime([t[1] for t in s], pref=pref) for s in scheds]
     units = [sum(t[2].units for t in s) for s in scheds]
-    units_scheds = sorted(zip(units,scheds),key=lambda t: t[0])
-    scheds = [t[1] for t in units_scheds]
-    units = [t[0] for t in units_scheds]
+
+    if pref == 0:
+        sortKey = lambda t: t[0]
+    elif pref == 1:
+        sortKey = lambda t: abs(t[0] - 12)
+    else:
+        sortKey = lambda t: -1 * t[0]
+
+
+    times_units_scheds = sorted(zip(times,units,scheds),key=sortKey)
+
+    scheds = [t[2] for t in times_units_scheds]
+    units = [t[1] for t in times_units_scheds]
+    times = [t[0] for t in times_units_scheds]
     return scheds,units
 
-def getAllSchedules(classNums, sem=0, minUnits=0, maxUnits=100, pref=None):
+
+def getAllSchedules(classNums, sem=0, minUnits=0, maxUnits=100, pref=0):
     sem = int(sem)
     minUnits = int(minUnits)
     maxUnits = int(maxUnits)
+    if pref.lower() == 'morning':
+        pref = 0
+    elif pref.lower() == 'afternoon':
+        pref = 1
+    elif pref.lower() == 'evening':
+        pref = 2
+
 
     classNums = map(lambda s: s.replace('-', ''), classNums)
     fullSched = getFullSchedule(sem)
     allClasses = [fullSched[cns] for cns in classNums if cns in fullSched]
 
     print(allClasses)
+    print(pref)
 
 
 
-    scheds, units = getScheds(allClasses)
+    scheds, units = getScheds(allClasses, maxUnits=maxUnits, pref=pref)
 
     # FILTER MIN
     scheds_units = zip(scheds, units)
     scheds_units = filter(lambda p: p[1] >= minUnits, scheds_units)
     scheds = [s for (s,_) in scheds_units]
     units = [u for (_, u) in scheds_units]
-
-    # FILTER MAX. LOOK AT SUBSETS
 
 
     flatScheds = []
@@ -147,13 +204,14 @@ if __name__ == '__main__':
 
     #classNums = ['15122','21127','15150']
 
-    classNums = ['15122', '15112', '21325']
+    #classNums = ['15112', '15122', '21325']
+    classNums = ['15451', '21241', '21325']
 
     allClasses = map(findClass, classNums)
 
     ACTIVE_CLASS_LIST = filter(lambda v: v is not None, allClasses)
 
-    scheds,units = getScheds(ACTIVE_CLASS_LIST)
+    scheds,units = getScheds(ACTIVE_CLASS_LIST, maxUnits=25)
 
     classes = ACTIVE_CLASS_LIST
     COLORS = mkColors(classNums)
@@ -283,5 +341,5 @@ if __name__ == '__main__':
     schedLb.config(yscrollcommand=scrollbar.set)
     scrollbar.config(command=schedLb.yview)
 
-    drawSchedule(scheds[-1])
+    drawSchedule(scheds[0])
     root.mainloop()
